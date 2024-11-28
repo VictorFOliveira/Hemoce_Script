@@ -1,11 +1,36 @@
-create or replace function atualizar_quantidade_sangue()
-return trigger AS
+-- função para atualizar a quantidade de doações do doador
+create or replace function atualizar_quantidade_doacoes()
+returns trigger AS
 $$
 BEGIN
--- se for uma inserção de uma nova doação no caso *insert*, a função vai adicionar o volume de sangue
-if tg_op = 'INSERT' THEN
---atualiza a quantidade de doacoes e o volume total de sangue no doador
 update doador 
 set quantodade_doacoes = quantidade_doaces +1,
-quantidade_de_sangue_ml = quantidade_de_sangue_ + new.volume_doado
 where id_doador = new.id_doador;
+return new;
+end;
+$$ language plpgsql;
+
+--  Trigger que executa a atualização das doações
+create trigger trigger_atualizar_doacoes
+after insert on doacao
+for each ROW
+execute function atualizar_quantidade_doacoes
+
+
+
+-- função que atualiza a data da ultima doação
+create or replace function atualizar_ultima_doacao_doador()
+returns trigger AS
+$$
+Begin update doador
+set data_ultima_doacao =  new.data_doacao
+where id_doador = new.id_doador;
+return new;
+end;
+$$ language plpgsql;
+
+-- trigger que executa atualização da data
+create trigger trigger_atualizar_data
+afeter insert on doacao
+for each row 
+execute function atualizar_ultima_doacao_doador
