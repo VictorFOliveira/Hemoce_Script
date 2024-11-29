@@ -4,7 +4,7 @@ from doador
 where tipo_sanguineo = "O+";
 
 --contar o número de doações realizadas por cada doador
-select id_doador,  count(8) as total_doacoes
+select id_doador,  count(*) as total_doacoes
 from doacao
 group by id_doador
 
